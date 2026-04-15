@@ -1,16 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #f9f9f9;
-  --color-foreground: #111111;
+  --color-background: var(--bg-color);
+  --color-foreground: var(--text-color);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+:root {
+  --bg-color: #f9f9f9;
+  --text-color: #111111;
+}
+
+.dark {
+  --bg-color: #0b0c10;
+  --text-color: #c5c6c7;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: #111111;
+  color: #f9f9f9;
+}
+
+.dark ::selection {
+  background-color: #f9f9f9;
+  color: #111111;
 }
 
 /* Lenis smooth scroll required styles */

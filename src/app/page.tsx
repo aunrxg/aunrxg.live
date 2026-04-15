@@ -10,7 +10,7 @@ export default function Home() {
         <div className="mb-10 w-full flex justify-center">
           <SmartTitle title="Detecting Support for Division in Calc()" />
         </div>
-        <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mb-12 font-light mix-blend-multiply">
+        <p className="text-lg md:text-xl max-w-2xl mb-12 font-light mix-blend-multiply">
           A buttery smooth portfolio experience built with Next.js, Framer Motion, and Lenis. Emphasizing typography, space, and motion.
         </p>
         
@@ -32,10 +32,10 @@ export default function Home() {
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight mb-8">
           The aesthetics of silence.
         </h2>
-        <p className="text-lg text-neutral-700 font-light leading-relaxed mb-6">
+        <p className="text-lg font-light leading-relaxed mb-6">
           In a world increasingly cluttered with information and aggressive visual noise, minimalist design acts as a quiet rebellion. We strip away the unnecessary, not to empty the space, but to let the essential speak more clearly.
         </p>
-        <p className="text-lg text-neutral-700 font-light leading-relaxed">
+        <p className="text-lg font-light leading-relaxed">
           Through the precise application of typography, grid systems, and buttery smooth interactions, the interface becomes invisible, leaving only the experience.
         </p>
       </section>

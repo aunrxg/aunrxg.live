@@ -33,16 +33,16 @@ export default function SmartTitle({ title }: { title: string }) {
 
         // Colors: varying shades of neutral
         const colors = [
-          "text-neutral-900",
-          "text-neutral-700",
-          "text-neutral-500",
-          "text-[#778da9]", // subtle slate blue
-          "text-[#8e9aaf]", // subtle lavender
+          "text-neutral-800 dark:text-neutral-200",
+          "text-neutral-600 dark:text-neutral-300",
+          "text-neutral-500 dark:text-neutral-400",
+          "text-[#778da9] dark:text-[#a0b0c9]", 
+          "text-[#6c7b95] dark:text-[#b0bdcf]",
         ];
 
-        let colorClass = "text-neutral-900";
+        let colorClass = "text-neutral-800 dark:text-neutral-200";
         if (isConnector || isSerif) {
-          colorClass = "text-[#d4a373]"; // subtle golden/pinkish tone for serifs
+          colorClass = "text-[#d4a373] dark:text-[#e5b385]";
         } else {
           colorClass = colors[Math.floor(((rand * 100000) % 1) * colors.length)];
         }
@@ -56,7 +56,7 @@ export default function SmartTitle({ title }: { title: string }) {
               ${isUppercase ? "uppercase" : "lowercase"}
               ${weightClass}
               ${colorClass}
-              transition-colors duration-500 hover:text-neutral-900
+              transition-colors duration-500 hover:text-neutral-950 dark:hover:text-white
             `}
           >
             {word}
