@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import SmartTitle from "@/components/SmartTitle";
 
 export default function About() {
   return (
@@ -12,9 +13,10 @@ export default function About() {
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>
-        <h1 className="text-5xl md:text-8xl font-medium tracking-tight mb-8">
+        {/* <h1 className="text-5xl md:text-8xl font-medium tracking-tight mb-8">
           About this project.
-        </h1>
+        </h1> */}
+        <SmartTitle title="About this project"/>
         <p className="text-xl md:text-2xl text-neutral-600 font-light leading-relaxed">
           The seamless transition you just experienced is powered by Framer Motion's AnimatePresence tracking the Next.js router path.
         </p>

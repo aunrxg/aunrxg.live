@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import SmartTitle from "@/components/SmartTitle";
 
 export default function Home() {
   return (
     <main className="flex-1">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center min-h-screen px-6 text-center relative">
-        <h1 className="text-5xl md:text-8xl font-medium tracking-tight mb-6">
-          Minimalist Excellence
-        </h1>
+      <section className="flex flex-col items-center justify-center min-h-screen px-6 text-center relative pt-20">
+        <div className="mb-10 w-full flex justify-center">
+          <SmartTitle title="Detecting Support for Division in Calc()" />
+        </div>
         <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mb-12 font-light mix-blend-multiply">
           A buttery smooth portfolio experience built with Next.js, Framer Motion, and Lenis. Emphasizing typography, space, and motion.
         </p>
