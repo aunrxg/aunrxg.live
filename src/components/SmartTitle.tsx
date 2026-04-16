@@ -56,7 +56,7 @@ export default function SmartTitle({ title }: { title: string }) {
               ${isUppercase ? "uppercase" : "lowercase"}
               ${weightClass}
               ${colorClass}
-              transition-colors duration-500 dark:hover:text-neutral-300 hover:text-neutral-950
+              transition-colors duration-500 dark:hover:text-white hover:text-neutral-950
             `}
           >
             {word}
