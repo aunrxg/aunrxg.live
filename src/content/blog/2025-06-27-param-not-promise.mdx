@@ -1,0 +1,122 @@
+---
+title: "Params are not Promise? Think Again. The Next.js 15 Trap"
+summary: "The Most Frustrating TypeScript Error I Solved in Next.js 15 — and What You Need to Know"
+tags: ["next15", "ts", "typescript", "debug", "error", "promise", "params"]
+ogImage: "/posts/param/og-image.jpeg"
+---
+
+# Params are not Promise? Think Again. The Next.js 15 Trap
+
+The Most Frustrating TypeScript Error I Solved in Next.js 15 — and What You Need to Know. 
+
+## The Background
+
+> I was building blog and project feature for my portfolio in Next.js App router using @next/mdx, and everything worked locally… until I tried deploying to Vercel. Suddenly, I hit this frustrating error:
+
+```bash showLineNumbers
+Type '{ slug: string; }' is missing the following properties from type 'Promise<any>': then, catch, finally
+```
+
+---
+
+## My Initial Setup 
+
+### My File: `app/posts/[slug]/page.tsx`
+
+```tsx showLineNumbers
+export default async function PostPage({ params }: { params: { slug: string } }) {
+  const slug = params.slug;
+}
+```
+
+### My `generateStaticParams()` looked like:
+
+```tsx showLineNumbers
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  return await getAllPostPaths(true);
+}
+```
+
+this function `getAllPostPaths` return an array with slugs something like this: 
+```ts showLineNumbers
+[
+  { slug: "slug-blog-1" },
+  { slug: "slug-blog-2" },
+]
+```
+and it was intended to return this.
+
+## Elephant in the room
+
+Even though everything looked right, TypeScript said:
+
+```bash showLineNumbers
+Type '{ slug: string; }' is missing the following properties from type 'Promise<any>'
+```
+
+## What I tried (That didn't worked)
+
+- Explicitly typing generateStaticParams
+
+- Defining a clean PageProps type
+
+- Clearing .next/, node_modules/, and lock files
+
+- Commenting out real logic
+
+- Rebuilding clean
+
+- Pushing to Vercel again and again
+
+Still, the error persisted.
+
+
+---
+
+
+## The Real Problem: Next.js 15 Changes params to a Promise
+
+After hours of debugging, I discovered that in **Next.js 15**, route segment props like `params` are now passed in as a **Promise**, not a plain object.
+
+See the official [Next.js RFC & GitHub issue](https://github.com/vercel/next.js/discussions/80494):
+
+> “The params and searchParams values passed to your route handlers are now Promises to support streaming and async composition.”
+
+
+## The fix
+
+Update your component to **await** the `params`:
+
+```tsx showLineNumbers
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  // Now works fine!
+}
+```
+
+Boom. The error disappears — both locally and on Vercel.
+
+--- 
+
+## Final Thoughts
+
+This was hands down one of the most frustrating bugs I've solved — not because it was complicated, but because it was undocumented and subtle. The lesson?
+
+> Sometimes the framework changes, and it's not your fault. But debugging it will grow you more than any tutorial ever will.
+
+---
+
+## Edit
+
+Got a reply from the **Tech Lead of Next.js and turbopack** himself, appreciate his efforts to response himself. Thanks a lot Tim.
+
+Here is the [official documentation](https://nextjs.org/docs/app/guides/upgrading/version-15#params--searchparams) for asynchronous layout with params and searchParams
+
+![Params image](/posts/param/params.png)
+
+Here is the [thread](https://x.com/aunrxg/status/1938579687338315831) for whole conversation.
