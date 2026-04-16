@@ -33,7 +33,7 @@ export default function CodeBlock({ children, className }: any) {
            </button>
         </div>
       </div>
-      <Highlight theme={themes.vsDark} code={code} language={language}>
+      <Highlight theme={themes.dracula} code={code} language={language}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className="p-4 md:p-6 overflow-x-auto selection:bg-[#4d4d4d]" style={{ ...style, backgroundColor: "transparent" }}>
             {tokens.map((line, i) => (

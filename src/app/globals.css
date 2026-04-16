@@ -12,9 +12,11 @@
   --text-color: #111111;
 }
 
-.dark {
-  --bg-color: #0b0c10;
-  --text-color: #c5c6c7;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #0b0c10;
+    --text-color: #c5c6c7;
+  }
 }
 
 body {
@@ -28,9 +30,11 @@ body {
   color: #f9f9f9;
 }
 
-.dark ::selection {
-  background-color: #f9f9f9;
-  color: #111111;
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #f9f9f9;
+    color: #111111;
+  }
 }
 
 /* Lenis smooth scroll required styles */
