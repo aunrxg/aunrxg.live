@@ -30,11 +30,11 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased`}>
       <body className="min-h-screen flex flex-col relative">
         <NoiseOverlay />
-        <SmoothScroll>
+        {/* <SmoothScroll> */}
           <PageTransition>
             {children}
           </PageTransition>
-        </SmoothScroll>
+        {/* </SmoothScroll> */}
       </body>
     </html>
   );

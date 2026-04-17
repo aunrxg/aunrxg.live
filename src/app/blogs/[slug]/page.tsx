@@ -84,7 +84,7 @@ export default async function BlogPost({ params }: Props) {
     <main className="min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-20 md:py-32">
         <Link 
-          href="/"
+          href="/blogs"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-medium hover:opacity-70 transition-opacity mb-10 text-[#61afef]"
         >
           <ArrowLeft className="w-4 h-4 ml-1" />
