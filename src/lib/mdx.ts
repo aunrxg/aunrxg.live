@@ -12,6 +12,8 @@ export interface PostMeta {
   formattedDate: string;
   slug: string;
   url: string;
+  githubUrl?: string;
+  liveUrl?: string;
 }
 
 export function getAllPosts(directory: string, baseUrl: string): PostMeta[] {
@@ -41,6 +43,8 @@ export function getAllPosts(directory: string, baseUrl: string): PostMeta[] {
         formattedDate,
         slug,
         url: `${baseUrl}/${slug}`,
+        githubUrl: data.githubUrl || undefined,
+        liveUrl: data.liveUrl || undefined,
       };
     })
     .sort((a, b) => (new Date(b.date).getTime() > new Date(a.date).getTime() ? 1 : -1));
