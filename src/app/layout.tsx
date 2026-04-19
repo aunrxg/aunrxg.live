@@ -19,8 +19,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Minimalist Portfolio",
-  description: "A buttery smooth, high aesthetic portfolio",
+  title: "Anurag Poddar | Full Stack Developer & AI Engineer",
+  description: "I am a Full Stack Developer and AI Engineer obsessed with building elegant, highly performant software. My work spans across modern web architectures, crafting scalable backend systems, and experimenting with artificial intelligence to push the boundaries of digital products. When I'm not writing code, I enjoy exploring open-source tools and refining minimal design aesthetics.",
 };
 
 export default function RootLayout({

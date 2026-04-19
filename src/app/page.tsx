@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, Mail } from "lucide-react";
 import FadeIn from "@/components/FadeIn";
 import GithubHeatmapServer from "@/components/github/GithubHeatmapServer";
 import Image from "next/image";
+import RotatingHeadline from "@/components/RatateHeading";
 
 export default function Home() {
   const latestBlogs = getAllPosts("blog", "/blog").slice(0, 3);
@@ -16,17 +17,15 @@ export default function Home() {
         <section className="flex flex-col items-start">
           <FadeIn delay={0.1} className="flex items-end gap-6 md:gap-8 mb-8">
             <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-800 border-[3px] border-white dark:border-neutral-900 shadow-sm relative">
-               <Image src="/avatar.jpg" alt="Anurag Poddar" className="w-full h-full object-cover" width={128} height={128} priority />
+               <Image src="/profile.jpeg" alt="Anurag Poddar" className="w-full h-full object-cover" width={128} height={128} priority />
             </div>
             
             <div className="flex flex-col">
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1 text-neutral-900 dark:text-neutral-50 flex items-center gap-2 border-y border-neutral-200 dark:border-neutral-800 py-1">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-neutral-900 dark:text-neutral-50 flex items-center gap-2 border-y border-neutral-200 dark:border-neutral-800 py-1">
                 Anurag Poddar
                 <BadgeCheck size={24} className="text-[#000000] fill-[#0A84FF]" />
               </h1>
-              <p className="text-neutral-500 dark:text-neutral-400 font-mono text-xs md:text-base mt-1">
-                Full Stack Developer · AI Engineer
-              </p>
+              <RotatingHeadline headlines={["Full Stack Developer", "AI Engineer" ]} />
             </div>
           </FadeIn>
         </section>
