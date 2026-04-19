@@ -13,14 +13,14 @@ export default function Home() {
     <main className="min-h-screen">
       <div className="max-w-[700px] mx-auto px-6 py-20 md:py-32">
         {/* HERO SECTION */}
-        <section className="mb-24 flex flex-col items-start">
-          <FadeIn delay={0.1} className="flex items-center gap-6 md:gap-8 mb-8">
+        <section className="flex flex-col items-start">
+          <FadeIn delay={0.1} className="flex items-end gap-6 md:gap-8 mb-8">
             <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-800 border-[3px] border-white dark:border-neutral-900 shadow-sm relative">
                <Image src="/avatar.jpg" alt="Anurag Poddar" className="w-full h-full object-cover" width={128} height={128} priority />
             </div>
             
             <div className="flex flex-col">
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1 text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1 text-neutral-900 dark:text-neutral-50 flex items-center gap-2 border-y border-neutral-200 dark:border-neutral-800 py-1">
                 Anurag Poddar
                 <BadgeCheck size={24} className="text-[#000000] fill-[#0A84FF]" />
               </h1>
@@ -29,7 +29,10 @@ export default function Home() {
               </p>
             </div>
           </FadeIn>
-          
+        </section>
+
+        {/* SOCIAL LINKS */}
+        <section className="">
           <FadeIn delay={0.2} className="pl-2">
             <div className="flex gap-5 items-center text-neutral-400 dark:text-neutral-500">
               <a href="#" aria-label="X (Twitter)" className="hover:text-black dark:hover:text-white transition-colors">
@@ -46,7 +49,10 @@ export default function Home() {
               </a>
             </div>
           </FadeIn>
-          
+        </section>
+
+        {/* ABOUT SECTION */}
+        <section className="mb-24">
           <FadeIn delay={0.25} className="mt-10 max-w-2xl text-neutral-600 dark:text-neutral-400 font-light text-sm md:text-base leading-relaxed">
             <p>
               I am a Full Stack Developer and AI Engineer obsessed with building elegant, highly performant software. My work spans across modern web architectures, crafting scalable backend systems, and experimenting with artificial intelligence to push the boundaries of digital products. When I'm not writing code, I enjoy exploring open-source tools and refining minimal design aesthetics.

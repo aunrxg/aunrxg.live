@@ -4,6 +4,8 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import NoiseOverlay from "@/components/NoiseOverlay";
 import PageTransition from "@/components/PageTransition";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import NavbarWrapper from "@/components/NavbarWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,14 +29,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased`}>
-      <body className="min-h-screen flex flex-col relative">
-        <NoiseOverlay />
-        {/* <SmoothScroll> */}
-          <PageTransition>
-            {children}
-          </PageTransition>
-        {/* </SmoothScroll> */}
+    <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased`} suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col relative transition-colors duration-300">
+        <ThemeProvider>
+          <NoiseOverlay />
+          <NavbarWrapper />
+          {/* <SmoothScroll> */}
+            <PageTransition>
+              {children}
+            </PageTransition>
+          {/* </SmoothScroll> */}
+        </ThemeProvider>
       </body>
     </html>
   );
