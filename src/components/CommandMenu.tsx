@@ -143,13 +143,6 @@ export function CommandMenu({ items }: { items: SearchItem[] }) {
                       <Moon className="w-4 h-4" />
                       Dark Mode
                     </Command.Item>
-                    <Command.Item
-                      onSelect={() => runCommand(() => setTheme("system"))}
-                      className="flex items-center gap-3 px-3 py-3 text-sm text-neutral-700 dark:text-neutral-300 rounded-lg cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 aria-selected:text-neutral-900 dark:aria-selected:text-neutral-100 transition-colors"
-                    >
-                      <Monitor className="w-4 h-4" />
-                      System Mode
-                    </Command.Item>
                   </Command.Group>
                 </Command.List>
               </Command>

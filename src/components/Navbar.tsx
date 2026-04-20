@@ -24,9 +24,7 @@ export default function Navbar({ searchItems }: { searchItems: any[] }) {
   }, []);
 
   const toggleTheme = () => {
-    if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("system");
-    else setTheme("light");
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   if (!mounted) return null;
@@ -69,10 +67,8 @@ export default function Navbar({ searchItems }: { searchItems: any[] }) {
           >
             {theme === "light" ? (
               <Sun className="w-4 h-4" />
-            ) : theme === "dark" ? (
-              <Moon className="w-4 h-4" />
             ) : (
-              <Monitor className="w-4 h-4" />
+              <Moon className="w-4 h-4" />
             )}
           </button>
         </div>
