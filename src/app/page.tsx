@@ -3,32 +3,19 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, Mail } from "lucide-react";
 import FadeIn from "@/components/FadeIn";
 import GithubHeatmapServer from "@/components/github/GithubHeatmapServer";
-import Image from "next/image";
-import RotatingHeadline from "@/components/RatateHeading";
+import Hero from "@/components/Hero";
+
 
 export default function Home() {
   const latestBlogs = getAllPosts("blog", "/blog").slice(0, 3);
   const latestProjects = getAllPosts("projects", "/projects").slice(0, 2);
 
+
   return (
     <main className="min-h-screen">
       <div className="max-w-[700px] mx-auto px-6 py-20 md:py-32">
         {/* HERO SECTION */}
-        <section className="flex flex-col items-start">
-          <FadeIn delay={0.1} className="flex items-end gap-6 md:gap-8 mb-8">
-            <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-800 border-[3px] border-white dark:border-neutral-900 shadow-sm relative">
-               <Image src="/profile.jpeg" alt="Anurag Poddar" className="w-full h-full object-cover" width={128} height={128} priority />
-            </div>
-            
-            <div className="flex flex-col">
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-neutral-900 dark:text-neutral-50 flex items-center gap-2 border-y border-neutral-200 dark:border-neutral-800 py-1">
-                Anurag Poddar
-                <BadgeCheck size={24} className="text-[#000000] fill-[#0A84FF]" />
-              </h1>
-              <RotatingHeadline headlines={["Full Stack Developer", "AI Engineer" ]} />
-            </div>
-          </FadeIn>
-        </section>
+        <Hero />
 
         {/* SOCIAL LINKS */}
         <section className="">
@@ -102,7 +89,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {latestProjects.map((post) => (
-              <div key={post.slug} className="group bg-neutral-50 dark:bg-neutral-900 rounded-2xl md:p-4 border border-neutral-200 dark:border-neutral-800 transition-colors h-full flex flex-col hover:border-neutral-300 dark:hover:border-neutral-700">
+              <div key={post.slug} className="group bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 border border-neutral-200 dark:border-neutral-800 transition-colors h-full flex flex-col hover:border-neutral-300 dark:hover:border-neutral-700">
                 <div className="flex justify-between items-start mb-4">
                   <Link href={post.url} className="text-xl md:text-2xl font-medium transition-colors group-hover:text-[#61afef]">
                     {post.title}
@@ -135,7 +122,7 @@ export default function Home() {
                       </Link>
                     )}
                   </div>
-                  <Link href={post.url} className="text-sm mr-5 font-mono lowercase text-neutral-400 hover:text-[#61afef] transition-colors group-hover:underline pl-4 whitespace-nowrap">
+                  <Link href={post.url} className="text-sm font-mono lowercase text-neutral-400 hover:text-[#61afef] transition-colors group-hover:underline pr-2 whitespace-nowrap">
                     <ArrowRight size={18} />
                   </Link>
                 </div>

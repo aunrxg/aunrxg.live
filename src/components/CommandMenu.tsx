@@ -26,6 +26,10 @@ export function CommandMenu({ items }: { items: SearchItem[] }) {
         e.preventDefault();
         setOpen((open) => !open);
       }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
     };
 
     document.addEventListener("keydown", down);
@@ -57,7 +61,7 @@ export function CommandMenu({ items }: { items: SearchItem[] }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-neutral-950/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-neutral-50/40 dark:bg-neutral-950/40 backdrop-blur-sm"
               onClick={() => setOpen(false)}
             />
             
