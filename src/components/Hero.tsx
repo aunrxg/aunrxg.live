@@ -15,7 +15,7 @@ export default function Hero() {
   console.log(theme);
 
   return (
-    <section className="flex flex-col items-start">
+    <section className="flex flex-col items-start mt-6 md:mt-0">
       <FadeIn delay={0.1} className="flex items-end gap-6 md:gap-8 mb-8 relative">
         <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-800 border-[3px] border-white dark:border-neutral-900 shadow-sm relative group">
           <Image

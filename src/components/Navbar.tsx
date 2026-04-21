@@ -12,6 +12,7 @@ const navItems = [
   { name: "Home", path: "/" },
   { name: "Blogs", path: "/blogs" },
   { name: "Projects", path: "/projects" },
+  { name: "Contact", path: "/contact" },
 ];
 
 export default function Navbar({ searchItems }: { searchItems: any[] }) {
@@ -37,7 +38,7 @@ export default function Navbar({ searchItems }: { searchItems: any[] }) {
             <Link
               key={item.path}
               href={item.path}
-              className={`relative px-3 py-1.5 text-sm font-medium transition-colors rounded-full ${
+              className={`relative px-3 py-1.5 text-xs md:text-sm font-medium transition-colors rounded-full ${
                 pathname === item.path
                   ? "text-neutral-900 dark:text-neutral-100"
                   : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"

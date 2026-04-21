@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Command } from "cmdk";
-import { Search, FileText, Layout, Moon, Sun, X } from "lucide-react";
+import { Search, FileText, Layout, Moon, Sun, X, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -114,6 +114,13 @@ export function CommandMenu({ items }: { items: SearchItem[] }) {
                     >
                       <Layout className="w-4 h-4" />
                       Projects
+                    </Command.Item>
+                    <Command.Item
+                      onSelect={() => runCommand(() => router.push("/contact"))}
+                      className="flex items-center gap-3 px-3 py-3 text-sm text-neutral-700 dark:text-neutral-300 rounded-lg cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 aria-selected:text-neutral-900 dark:aria-selected:text-neutral-100 transition-colors"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Contact
                     </Command.Item>
                   </Command.Group>
 

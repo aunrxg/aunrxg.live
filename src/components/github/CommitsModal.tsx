@@ -1,6 +1,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { CommitActivity } from "@/lib/github";
+import Link from "next/link";
 
 interface CommitsModalProps {
   isOpen: boolean;
@@ -51,10 +52,10 @@ export function CommitsModal({ isOpen, onClose, date, commits, loading }: Commit
                  <ul className="space-y-3 mt-2">
                    {commits.map(c => (
                      <li key={c.id} className="border border-neutral-100 dark:border-neutral-800/50 bg-neutral-50 dark:bg-neutral-800/20 hover:bg-neutral-100 dark:hover:bg-neutral-800 p-4 rounded-xl transition-colors group">
-                       <a href={c.url} target="_blank" rel="noopener noreferrer" className="block">
+                       <Link href={c.url} target="_blank" rel="noopener noreferrer" className="block">
                          <span className="font-mono text-xs text-[#c678dd] mb-2 block">{c.repo}</span>
                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 leading-relaxed">{c.message}</p>
-                       </a>
+                       </Link>
                      </li>
                    ))}
                  </ul>

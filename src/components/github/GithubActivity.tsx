@@ -4,6 +4,7 @@ import { useState, MouseEvent, useMemo } from "react";
 import { ContributionDay, CommitActivity, getGithubCommitsForDay } from "@/lib/github";
 import { HeatmapTooltip, TooltipData } from "./HeatmapTooltip";
 import { CommitsModal } from "./CommitsModal";
+import Link from "next/link";
 
 export default function GithubActivity({ days, username }: { days: ContributionDay[], username: string }) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
@@ -104,7 +105,7 @@ export default function GithubActivity({ days, username }: { days: ContributionD
       {/* Footer */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3 text-[10px] md:text-xs font-mono text-neutral-500 gap-3">
         <div>
-           {total} contributions in the last year on <a href={`https://github.com/${username}`} target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-300 underline underline-offset-2 transition-colors">GitHub</a>.
+           {total} contributions in the last year on <Link href={`https://github.com/${username}`} target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-300 underline underline-offset-2 transition-colors">GitHub</Link>.
         </div>
         <div className="flex gap-1.5 items-center">
            <span>Less</span>
