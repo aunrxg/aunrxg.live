@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { BadgeCheck } from "lucide-react";
 import OnekoCat from "./OnekoCat";
@@ -8,8 +8,6 @@ import RotatingHeadline from "./RatateHeading";
 import FadeIn from "./FadeIn";
 import { useTheme } from "./ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
-import Mascot from "./mascot/Mascot";
-import { onekoConfig } from "./mascot/config/oneko";
 
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);

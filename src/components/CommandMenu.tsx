@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Command } from "cmdk";
-import { Search, FileText, Layout, Moon, Sun, Monitor, X } from "lucide-react";
+import { Search, FileText, Layout, Moon, Sun, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
