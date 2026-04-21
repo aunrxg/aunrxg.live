@@ -8,6 +8,8 @@ import RotatingHeadline from "./RatateHeading";
 import FadeIn from "./FadeIn";
 import { useTheme } from "./ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
+import Mascot from "./mascot/Mascot";
+import { onekoConfig } from "./mascot/config/oneko";
 
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);

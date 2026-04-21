@@ -142,19 +142,19 @@ export default function Home() {
           <div className="flex flex-col gap-8">
             <article className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 group">
               <time className="text-sm font-mono text-neutral-500 whitespace-nowrap min-w-[150px]">
-                2024 — Present
+                Dec 2024 — Apr 2025
               </time>
               <div>
                 <h3 className="text-lg md:text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-50">
-                  AI Engineer <span className="text-neutral-400 font-light">@ Stealth Startup</span>
+                  Web Developer <span className="text-neutral-400 font-light">@Saral Startup School</span>
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-400 font-light text-sm leading-relaxed">
-                  Leading the architecture and development of high-performance web applications using Next.js and React. Designing scalable backend systems and integrated AI models to enhance core product features.
+                  During my internship at Saral Startup School, an early-stage edtech startup, I worked on a large-scale Next.js monorepo under a technical lead. I reduced LCP from 4.2s to 1.8s and INP from 350ms to 110ms by auditing legacy Tailwind usage and adding explicit image dimensions across the codebase.
                 </p>
               </div>
             </article>
 
-            <article className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 group">
+            {/* <article className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 group">
               <time className="text-sm font-mono text-neutral-500 whitespace-nowrap min-w-[150px]">
                 2022 — 2024
               </time>
@@ -166,7 +166,7 @@ export default function Home() {
                   Developed award-winning landing pages and digital experiences for premium brands. Focused heavily on smooth animations, accessibility, and pixel-perfect UI implementations.
                 </p>
               </div>
-            </article>
+            </article> */}
           </div>
         </FadeIn>
 
