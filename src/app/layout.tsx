@@ -6,6 +6,7 @@ import NoiseOverlay from "@/components/NoiseOverlay";
 import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   variable: "--font-inter",
