@@ -5,6 +5,7 @@ import FadeIn from "@/components/FadeIn";
 import GithubHeatmapServer from "@/components/github/GithubHeatmapServer";
 import Hero from "@/components/Hero";
 import { IconTwitter, IconLinkedIn, IconGithub } from "@/constants/Icons";
+import ExperienceCard from "@/components/ExperienceCard";
 
 
 export default function Home() {
@@ -19,7 +20,7 @@ export default function Home() {
         <Hero />
 
         {/* SOCIAL LINKS */}
-        <section className="">
+        <section className="mb-24">
           <FadeIn delay={0.2} className="pl-2">
             <div className="flex gap-5 items-center text-neutral-400 dark:text-neutral-500">
               <Link title="X (Twitter)" href="https://x.com/aunrxg" aria-label="X (Twitter)" className="hover:text-black dark:hover:text-white transition-colors">
@@ -39,19 +40,18 @@ export default function Home() {
         </section>
 
         {/* ABOUT SECTION */}
-        <section className="mb-24">
-          <FadeIn delay={0.25} className="mt-10 max-w-2xl text-neutral-600 dark:text-neutral-400 font-light text-sm md:text-base leading-relaxed">
-            <div className="flex justify-between items-end mb-10 border-b border-neutral-200 dark:border-neutral-800 pb-4">
-              <h2 className="text-2xl font-medium tracking-tight">About Me</h2>
-            </div>
-            <p className="mb-6">
-              I am a Full Stack Developer and AI Engineer obsessed with building elegant, highly performant software. My work spans across modern web architectures, crafting scalable backend systems, and experimenting with artificial intelligence to push the boundaries of digital products. When I'm not writing code, I enjoy exploring open-source tools and refining minimal design aesthetics.
-            </p>
-            <p className="mb-6">
-              I am a Full Stack Developer and AI Engineer obsessed with building elegant, highly performant software. My work spans across modern web architectures, crafting scalable backend systems, and experimenting with artificial intelligence to push the boundaries of digital products. When I'm not writing code, I enjoy exploring open-source tools and refining minimal design aesthetics.
-            </p>
-          </FadeIn>
-        </section>
+        <FadeIn delay={0.25} className="mb-24">
+          <div className="flex justify-between items-end mb-10 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+            <h2 className="text-2xl font-medium tracking-tight">About Me</h2>
+          </div>
+          <div className="max-w-2xl text-neutral-600 dark:text-neutral-400 font-light text-sm md:text-base leading-relaxed">
+            <ul className="list-disc pl-5 space-y-3 marker:text-neutral-300 dark:marker:text-neutral-700">
+              <li>I am a Full Stack Developer and AI Engineer obsessed with building elegant, highly performant software.</li>
+              <li>My work spans across modern web architectures, crafting scalable backend systems, and experimenting with artificial intelligence to push the boundaries of digital products.</li>
+              <li>When I'm not writing code, I enjoy exploring open-source tools and refining minimal design aesthetics.</li>
+            </ul>
+          </div>
+        </FadeIn>
 
         {/* GITHUB SECTION */}
         <FadeIn delay={0.35} className="w-full">
@@ -150,33 +150,18 @@ export default function Home() {
             <h2 className="text-2xl font-medium tracking-tight">Experience</h2>
           </div>
           <div className="flex flex-col gap-8">
-            <article className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 group">
-              <time className="text-sm font-mono text-neutral-500 whitespace-nowrap min-w-[150px]">
-                Dec 2024 — Apr 2025
-              </time>
-              <div>
-                <h3 className="text-lg md:text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-50">
-                  Web Developer <span className="text-neutral-400 font-light">@Saral Startup School</span>
-                </h3>
-                <p className="text-neutral-600 dark:text-neutral-400 font-light text-sm leading-relaxed">
-                  During my internship at Saral Startup School, an early-stage edtech startup, I worked on a large-scale Next.js monorepo under a technical lead. I reduced LCP from 4.2s to 1.8s and INP from 350ms to 110ms by auditing legacy Tailwind usage and adding explicit image dimensions across the codebase.
-                </p>
-              </div>
-            </article>
-
-            {/* <article className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 group">
-              <time className="text-sm font-mono text-neutral-500 whitespace-nowrap min-w-[150px]">
-                2022 — 2024
-              </time>
-              <div>
-                <h3 className="text-lg md:text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-50">
-                  Full Stack Developer <span className="text-neutral-400 font-light">@ Creative Agency</span>
-                </h3>
-                <p className="text-neutral-600 dark:text-neutral-400 font-light text-sm leading-relaxed">
-                  Developed award-winning landing pages and digital experiences for premium brands. Focused heavily on smooth animations, accessibility, and pixel-perfect UI implementations.
-                </p>
-              </div>
-            </article> */}
+            <ExperienceCard
+              period="Dec 2024 — Apr 2025"
+              role="Web Developer"
+              company="Saral Startup School"
+              description="During my internship at Saral Startup School, an early-stage startup, I worked on a large-scale Next.js monorepo under a technical lead.  My work involved building and improving production ui components, fixing existing issues and optimizing performance."
+              technologies={["Next.js", "React", "Tailwind CSS", "TypeScript"]}
+              bullets={[
+                "Reduced LCP by 57% (4.2s to 1.8s), CLS by 89% (0.18 to 0.02), and INP by 68% (350ms to 110ms) by optimizing Tailwind CSS and image dimensions.",
+                "Led redesign of course page and developed a new blog section to enhance content discoverability and drive organic traffic improving SEO.",
+                "Integrated Strapi CMS APIs using SSR, improving content delivery speed and reducing client-side fetch overhead.",
+              ]}
+            />
           </div>
         </FadeIn>
 
