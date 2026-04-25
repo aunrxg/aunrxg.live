@@ -155,7 +155,7 @@ export default function Home() {
               role="Web Developer"
               company="Saral Startup School"
               description="During my internship at Saral Startup School, an early-stage startup, I worked on a large-scale Next.js monorepo under a technical lead.  My work involved building and improving production ui components, fixing existing issues and optimizing performance."
-              technologies={["Next.js", "React", "Tailwind CSS", "TypeScript"]}
+              technologies={["Next.js", "Strapi", "Tailwind CSS", "TypeScript"]}
               bullets={[
                 "Reduced LCP by 57% (4.2s to 1.8s), CLS by 89% (0.18 to 0.02), and INP by 68% (350ms to 110ms) by optimizing Tailwind CSS and image dimensions.",
                 "Led redesign of course page and developed a new blog section to enhance content discoverability and drive organic traffic improving SEO.",

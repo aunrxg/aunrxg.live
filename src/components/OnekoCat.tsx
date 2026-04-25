@@ -1,85 +1,242 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { motion, useSpring, useMotionValue } from "framer-motion";
 
-type CatState = "SLEEPING" | "ALERT" | "ESCAPE" | "RESET" | "PLAY_WITH_RIGHT_WALL" | "PLAY_WITH_LEFT_WALL" | "CLICK";
+// ─── Types ─────────────────────────────────────────────────────────────────
+
+type CatState =
+  | "SLEEPING"
+  | "WAKING"               // surprised — plays ALERT frames
+  | "DECIDING"             // sitting still, watching cursor — plays IDLE frames
+  | "RUNNING"              // committed to one direction, constant speed
+  | "SITTING"              // caught breath, grooming before sleep
+  | "PLAY_WITH_RIGHT_WALL"
+  | "PLAY_WITH_LEFT_WALL"
+  | "CLICK";
 
 interface OnekoCatProps {
   titleRef: React.RefObject<HTMLHeadingElement | null>;
 }
 
-// Sprite constants (32x32 frames)
-const SPRITE_SIZE = 32;
-const FPS = 8;
-const PROXIMITY_THRESHOLD = 120;
-const ESCAPE_SPEED = 2;
+// ─── Constants ─────────────────────────────────────────────────────────────
 
-// Frame coordinates (x, y) in the sprite sheet (8x4 grid, 32x32 frames)
-const FRAMES = {
-  SLEEPING: [
-    [64, 0],  // Sleeping frame 1 (Row 0, Col 2)
-    [64, 32], // Sleeping frame 2 (Row 1, Col 2)
-  ],
-  ALERT: [
-    [96, 64], // Surprised face 1 (Row 3, Col 2)
-    [224, 96], // Surprised face 2 (Row 3, Col 7)
-  ],
-  IDLE: [
-    [96, 96],  // Sitting (Row 3, Col 3)
-    [224, 0], // Sitting Blink (Row 0, Col 7)
-  ],
-  WALK_LEFT: [
-    [96, 0],   // Running Left 1 (Row 0, Col 3)
-    [96, 32], // Running Left 2 (Row 1, Col 3)
-  ],
-  WALK_RIGHT: [
-    [128, 64],   // Running Right 1 (Row 2, Col 4)
-    [128, 96], // Running Right 2 (Row 3, Col 4)
-  ],
-  PLAY_WITH_RIGHT_WALL: [
-    [64, 64],   // Play with Right wall 1 (Row 2, Col 2)
-    [64, 96],   // Play with Right wall 2 (Row 3, Col 2)
-  ],
-  PLAY_WITH_LEFT_WALL: [
-    [128, 0],   // Play with Right wall 1 (Row 0, Col 4)
-    [128, 32],  // Play with Right wall 1 (Row 1, Col 4)
-  ],
-  CLICK: [
-    [160, 0], // Mouse click 1 (Row 5, Col 0)
-    [192, 0], // Mouse click 1 (Row 6, Col 0)
-  ],
+const SPRITE_SIZE = 32;
+const PROXIMITY   = 120;   // px — cursor detection radius
+
+// The key to non-floaty movement: position only advances when the animation
+// frame flips. Each stride = exactly STEP pixels. Tune STEP to taste.
+const STEP        = 7;     // px per animation frame while running
+const RUN_FPS     = 8;     // strides per second
+
+const FRAMES: Record<string, [number, number][]> = {
+  SLEEPING:             [[64, 0],   [64, 32]],
+  ALERT:                [[96, 64],  [224, 96]],
+  IDLE:                 [[96, 96],  [224, 0]],
+  WALK_LEFT:            [[96, 0],   [96, 32]],
+  WALK_RIGHT:           [[128, 64], [128, 96]],
+  PLAY_WITH_RIGHT_WALL: [[64, 64],  [64, 96]],
+  PLAY_WITH_LEFT_WALL:  [[128, 0],  [128, 32]],
+  CLICK:                [[160, 0],  [192, 0]],
 };
 
-export default function OnekoCat({ titleRef }: OnekoCatProps) {
-  const [state, setState] = useState<CatState>("SLEEPING");
-  const [frameIndex, setFrameIndex] = useState(0);
-  const [direction, setDirection] = useState<"left" | "right">("right");
-  
-  const catX = useMotionValue(0);
-  const springX = useSpring(catX, { stiffness: 100, damping: 20 });
-  
-  const [bounds, setBounds] = useState({ left: 0, right: 0, width: 0 });
-  const lastInteractionTime = useRef(0);
+// Each state plays at a different cadence — sleeping should feel languid,
+// running snappy. This is what makes the cat feel alive vs robotic.
+const STATE_FPS: Record<CatState, number> = {
+  SLEEPING:             1.5,
+  WAKING:               3,
+  DECIDING:             2.5,
+  RUNNING:              RUN_FPS,
+  SITTING:              1.8,
+  PLAY_WITH_RIGHT_WALL: 7,
+  PLAY_WITH_LEFT_WALL:  7,
+  CLICK:                4,
+};
 
-  // Update title bounds
+// ─── Component ─────────────────────────────────────────────────────────────
+
+export default function OnekoCat({ titleRef }: OnekoCatProps) {
+  const [displayState, setDisplayState] = useState<CatState>("SLEEPING");
+  const [frameIndex,   setFrameIndex]   = useState(0);
+  const [catLeft,      setCatLeft]      = useState(0);
+  const [direction,    setDirection]    = useState<"left" | "right">("right");
+
+  // ── Refs — all mutation lives here so the RAF loop never goes stale ──────
+  const stateRef        = useRef<CatState>("SLEEPING");
+  const posRef          = useRef(0);
+  const dirRef          = useRef<"left" | "right">("right");
+  const boundsRef       = useRef({ left: 0, right: 0 });
+  const mouseRef        = useRef({ x: -9999, y: -9999 });
+  const stateEnteredRef = useRef(Date.now());
+  const frameTimerRef   = useRef(0);
+  const frameIdxRef     = useRef(0);
+  const rafRef          = useRef<number | null>(null);
+  const initializedRef  = useRef(false);
+  const sitDurRef       = useRef(2000);
+
+  // Per-cat personality — randomised once on mount
+  const personality = useRef({
+    wakeDelay:   400 + Math.random() * 500,  // ms of surprise before deciding
+    decideDelay: 200 + Math.random() * 300,  // ms of "oh no" stare before bolt
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  const getGlobalCenter = useCallback(() => {
+    if (!titleRef.current) return { x: 0, y: 0 };
+    const r = titleRef.current.getBoundingClientRect();
+    return { x: r.left + posRef.current + SPRITE_SIZE / 2, y: r.top };
+  }, [titleRef]);
+
+  const mouseToCat = useCallback(() => {
+    const c  = getGlobalCenter();
+    const dx = mouseRef.current.x - c.x;
+    const dy = mouseRef.current.y - c.y;
+    return { dist: Math.sqrt(dx * dx + dy * dy), dx };
+  }, [getGlobalCenter]);
+
+  const changeState = useCallback((
+    next: CatState,
+    runDir?: "left" | "right",
+  ) => {
+    if (stateRef.current === next) return;
+    stateRef.current        = next;
+    stateEnteredRef.current = Date.now();
+    frameIdxRef.current     = 0;
+    frameTimerRef.current   = 0;
+
+    if (runDir) {
+      dirRef.current = runDir;
+      setDirection(runDir);
+    }
+    if (next === "SITTING") {
+      sitDurRef.current = 1500 + Math.random() * 1500;
+    }
+    setDisplayState(next);
+  }, []);
+
+  // ── Bounds ────────────────────────────────────────────────────────────────
+
   const updateBounds = useCallback(() => {
-    if (titleRef.current) {
-      const rect = titleRef.current.getBoundingClientRect();
-      const parentRect = titleRef.current.parentElement?.getBoundingClientRect();
-      if (parentRect) {
-        // Calculate relative to parent
-        const left = rect.left - parentRect.left;
-        const right = rect.right - parentRect.left;
-        setBounds({ left, right, width: rect.width });
-        
-        // Initial position: center of title
-        if (catX.get() === 0) {
-          catX.set(left + rect.width / 2 - SPRITE_SIZE / 2);
+    if (!titleRef.current) return;
+    const r = titleRef.current.getBoundingClientRect();
+    const p = titleRef.current.parentElement?.getBoundingClientRect();
+    if (!p) return;
+    boundsRef.current = { left: r.left - p.left, right: r.right - p.left };
+
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      const { left, right } = boundsRef.current;
+      posRef.current = left + (right - left) / 2 - SPRITE_SIZE / 2;
+      setCatLeft(posRef.current);
+    }
+  }, [titleRef]);
+
+  // ── Game loop ─────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    let lastTs = 0;
+    const WALL_PAD = 6;
+
+    const tick = (ts: number) => {
+      rafRef.current = requestAnimationFrame(tick);
+      const dt      = Math.min(ts - lastTs, 50);
+      lastTs        = ts;
+
+      const elapsed = Date.now() - stateEnteredRef.current;
+      const { dist, dx } = mouseToCat();
+      const { left, right } = boundsRef.current;
+      const L = left  - WALL_PAD;
+      const R = right - SPRITE_SIZE + WALL_PAD;
+
+      // ── State logic ────────────────────────────────────────────────────
+
+      switch (stateRef.current) {
+
+        case "SLEEPING":
+          if (dist < PROXIMITY) changeState("WAKING");
+          break;
+
+        case "WAKING":
+          // Play surprised frames, then move to deciding
+          if (elapsed > personality.current.wakeDelay) changeState("DECIDING");
+          break;
+
+        case "DECIDING":
+          // Hold a beat, stare at the cursor, then bolt opposite direction.
+          // Direction locked here — cat commits and doesn't second-guess.
+          if (elapsed > personality.current.decideDelay) {
+            changeState("RUNNING", dx > 0 ? "left" : "right");
+          }
+          break;
+
+        case "RUNNING":
+          // Position ticks happen inside the animation-frame block below.
+          // Only transition logic lives here.
+          if (dist > PROXIMITY + 80) changeState("SITTING");
+          break;
+
+        case "SITTING":
+          if (dist < PROXIMITY) {
+            // Cursor came back — evaluate which side and run the opposite way
+            changeState("RUNNING", dx > 0 ? "left" : "right");
+          } else if (elapsed > sitDurRef.current) {
+            changeState("SLEEPING");
+          }
+          break;
+
+        case "PLAY_WITH_LEFT_WALL":
+        case "PLAY_WITH_RIGHT_WALL":
+          if (dist > PROXIMITY + 40) changeState("SITTING");
+          break;
+
+        case "CLICK":
+          break;
+      }
+
+      // ── Animation frame tick ───────────────────────────────────────────
+      //
+      // IMPORTANT: position advances ONLY on a frame flip.
+      // This couples stride length (STEP px) to the visual leg cycle,
+      // eliminating the "floating" / "sliding" effect entirely.
+
+      const fps = STATE_FPS[stateRef.current];
+      frameTimerRef.current += dt;
+
+      if (frameTimerRef.current >= 1000 / fps) {
+        frameTimerRef.current -= 1000 / fps;
+
+        const nextFrame = (frameIdxRef.current + 1) % 2;
+        frameIdxRef.current = nextFrame;
+        setFrameIndex(nextFrame);
+
+        // Only move while running
+        if (stateRef.current === "RUNNING") {
+          const delta  = dirRef.current === "left" ? STEP : -STEP;
+          const newPos = Math.max(L, Math.min(R, posRef.current + delta));
+
+          posRef.current = newPos;
+          setCatLeft(newPos);
+
+          if (newPos <= L) {
+            changeState(dist < PROXIMITY ? "PLAY_WITH_LEFT_WALL" : "SITTING");
+          } else if (newPos >= R) {
+            changeState(dist < PROXIMITY ? "PLAY_WITH_RIGHT_WALL" : "SITTING");
+          }
         }
       }
-    }
-  }, [titleRef, catX]);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current); };
+  }, [changeState, mouseToCat]);
+
+  // ── Event listeners ───────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => { mouseRef.current = { x: e.clientX, y: e.clientY }; };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
 
   useEffect(() => {
     updateBounds();
@@ -87,123 +244,49 @@ export default function OnekoCat({ titleRef }: OnekoCatProps) {
     return () => window.removeEventListener("resize", updateBounds);
   }, [updateBounds]);
 
-  // Frame animation loop
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % 2);
-    }, 3000 / FPS);
-    return () => clearInterval(interval);
-  }, []);
+  // ── Sprite ────────────────────────────────────────────────────────────────
 
-  // Mouse tracking and behavior logic
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!titleRef.current) return;
-
-      const titleRect = titleRef.current.getBoundingClientRect();
-      const currentX = catX.get() + titleRect.left; // Global X
-      const currentY = titleRect.top - SPRITE_SIZE; // Global Y (slightly above)
-
-      const dx = e.clientX - (currentX + SPRITE_SIZE / 2);
-      const dy = e.clientY - (currentY + SPRITE_SIZE / 2);
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      const now = Date.now();
-
-      if (state === "CLICK") return;
-
-      if (state === "SLEEPING" && distance < PROXIMITY_THRESHOLD) {
-        setState("ALERT");
-        lastInteractionTime.current = now;
-      } else if (state === "ALERT" && now - lastInteractionTime.current > 500) {
-        setState("ESCAPE");
-      } else if (state === "ESCAPE") {
-        if (distance > PROXIMITY_THRESHOLD + 50) {
-          setState("RESET");
-          lastInteractionTime.current = now;
-        } else {
-          // Escape logic: move away from cursor horizontally
-          const moveDir = dx > 0 ? -1 : 1;
-          const targetX = catX.get() + moveDir * ESCAPE_SPEED;
-          
-          // Clamp within bounds
-          const padding = 10;
-          const leftBound = bounds.left - padding;
-          const rightBound = bounds.right - SPRITE_SIZE + padding;
-          const clampedX = Math.max(leftBound, Math.min(rightBound, targetX));
-          
-          // Wall check
-          if (clampedX === rightBound && dx > 0) {
-            setState("PLAY_WITH_RIGHT_WALL");
-          } else if (clampedX === leftBound && dx < 0) {
-            setState("PLAY_WITH_LEFT_WALL");
-          } else {
-            catX.set(clampedX);
-            setDirection(moveDir > 0 ? "right" : "left");
-          }
-        }
-      } else if ((state === "PLAY_WITH_RIGHT_WALL" || state === "PLAY_WITH_LEFT_WALL") && distance > PROXIMITY_THRESHOLD) {
-        setState("RESET");
-        lastInteractionTime.current = now;
-      } else if (state === "RESET" && now - lastInteractionTime.current > 2000) {
-        setState("SLEEPING");
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [state, bounds, catX, titleRef]);
-
-  // Determine current frame coordinates
-  const getSpritePos = () => {
-    let frameSet = FRAMES.SLEEPING;
-    if (state === "ALERT") frameSet = FRAMES.ALERT;
-    if (state === "ESCAPE") {
-      frameSet = direction === "left" ? FRAMES.WALK_RIGHT : FRAMES.WALK_LEFT;
+  const getSpritePos = (): string => {
+    let key = "SLEEPING";
+    switch (displayState) {
+      case "WAKING":               key = "ALERT"; break;
+      case "DECIDING":             key = "IDLE"; break;
+      case "RUNNING":              key = direction === "left" ? "WALK_LEFT" : "WALK_RIGHT"; break;
+      case "SITTING":              key = "IDLE"; break;
+      case "PLAY_WITH_RIGHT_WALL": key = "PLAY_WITH_RIGHT_WALL"; break;
+      case "PLAY_WITH_LEFT_WALL":  key = "PLAY_WITH_LEFT_WALL"; break;
+      case "CLICK":                key = "CLICK"; break;
     }
-    if (state === "PLAY_WITH_RIGHT_WALL") frameSet = FRAMES.PLAY_WITH_RIGHT_WALL;
-    if (state === "PLAY_WITH_LEFT_WALL") frameSet = FRAMES.PLAY_WITH_LEFT_WALL;
-    if (state === "CLICK") frameSet = FRAMES.CLICK;
-    if (state === "RESET") frameSet = FRAMES.IDLE;
-    
-    const frame = frameSet[frameIndex % frameSet.length];
-    return `-${frame[0]}px -${frame[1]}px`;
+    const [fx, fy] = FRAMES[key][frameIndex % 2];
+    return `-${fx}px -${fy}px`;
   };
 
+  const handleClick = useCallback(() => {
+    if (stateRef.current === "CLICK") return;
+    changeState("CLICK");
+    setTimeout(() => changeState("SITTING"), 1000);
+  }, [changeState]);
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   return (
-    <motion.div
-      onClick={() => {
-        setState("CLICK");
-        setTimeout(() => {
-          setState("RESET");
-          lastInteractionTime.current = Date.now();
-        }, 1000);
-      }}
+    <div
+      onClick={handleClick}
       style={{
-        x: springX,
-        y: -SPRITE_SIZE + 5,
-        position: "absolute",
-        width: SPRITE_SIZE,
-        height: SPRITE_SIZE,
-        backgroundImage: 'url("/oneko.gif")',
+        position:           "absolute",
+        left:               catLeft,
+        top:                -SPRITE_SIZE + 5,
+        width:              SPRITE_SIZE,
+        height:             SPRITE_SIZE,
+        backgroundImage:    'url("/oneko.gif")',
         backgroundPosition: getSpritePos(),
-        imageRendering: "pixelated",
-        pointerEvents: "auto",
-        cursor: "pointer",
-        zIndex: 10,
+        backgroundSize:     "auto",
+        imageRendering:     "pixelated",
+        pointerEvents:      "auto",
+        cursor:             "pointer",
+        zIndex:             10,
+        willChange:         "left, background-position",
       }}
-      initial={false}
-    >
-      {/* {state === "SLEEPING" && (
-        <motion.span
-          initial={{ opacity: 0, y: 0 }}
-          animate={{ opacity: [0, 1, 0], y: -20, x: [0, 5, -5, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute -top-4 left-4 text-[10px] font-mono text-neutral-400 select-none"
-        >
-          Zzz
-        </motion.span>
-      )} */}
-    </motion.div>
+    />
   );
 }
