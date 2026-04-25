@@ -2,7 +2,7 @@ import { getAllPosts } from "@/lib/mdx";
 import Navbar from "./Navbar";
 
 export default function NavbarWrapper() {
-  const blogs = getAllPosts("blog", "/blog");
+  const blogs = getAllPosts("blog", "/blogs");
   const projects = getAllPosts("projects", "/projects");
 
   const searchItems = [

@@ -13,7 +13,7 @@ type Props = {
 };
 
 function getPostFilePath(slug: string) {
-  const contentDir = path.join(process.cwd(), "src/content/blog");
+  const contentDir = path.join(process.cwd(), "src/content/blogs");
   if (!fs.existsSync(contentDir)) return null;
   const files = fs.readdirSync(contentDir);
   const matchedFile = files.find(file => file === `${slug}.mdx` || file.endsWith(`-${slug}.mdx`));
@@ -24,10 +24,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const filePath = getPostFilePath(slug);
   if (!filePath) return {};
-  
+
   const source = fs.readFileSync(filePath, "utf-8");
   const { data } = matter(source);
-  
+
   return {
     title: data.title || "Blog Post",
     description: data.summary || "",
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const contentDir = path.join(process.cwd(), "src/content/blog");
+  const contentDir = path.join(process.cwd(), "src/content/blogs");
   if (!fs.existsSync(contentDir)) return [];
   const files = fs.readdirSync(contentDir);
   return files
@@ -54,7 +54,7 @@ export async function generateStaticParams() {
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
   const filePath = getPostFilePath(slug);
-  
+
   if (!filePath) {
     return (
       <main className="min-h-screen grid place-items-center">
@@ -83,7 +83,7 @@ export default async function BlogPost({ params }: Props) {
   return (
     <main className="min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-20 md:py-32">
-        <Link 
+        <Link
           href="/blogs"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-medium hover:opacity-70 transition-opacity mb-10 text-[#61afef]"
         >
@@ -107,7 +107,7 @@ export default async function BlogPost({ params }: Props) {
             </div>
           )}
         </header>
-        
+
         <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:text-neutral-900 dark:prose-headings:text-[#e0e0e0] prose-a:text-[#61afef]">
           {content}
         </article>
